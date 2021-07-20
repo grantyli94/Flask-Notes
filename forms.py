@@ -18,4 +18,10 @@ class AddUserForm(FlaskForm):
     last_name = StringField('Last Name',
                              validators = [InputRequired(), Length(1,30)])
     
-    
+class LoginForm(FlaskForm):
+    """Form for logging in users"""
+
+    username = StringField("Username",
+                        validators=[InputRequired(), Length(1,20)])
+    password = PasswordField("Password",
+                           validators=[InputRequired()])
