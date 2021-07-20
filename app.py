@@ -1,6 +1,6 @@
 """Flask app for Users"""
 
-from models import User, db, connect_db
+from models import User, Note, db, connect_db
 from flask import Flask, request, jsonify, render_template, redirect, session, flash
 from forms import AddUserForm, LoginForm
 from flask_debugtoolbar import DebugToolbarExtension
@@ -76,7 +76,7 @@ def show_login_form():
     
     return render_template('login.html', form=form)
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def log_user_out():
     """Logs user out."""
 
@@ -90,7 +90,7 @@ def show_user_info(username):
     """Shows user info for logged in user"""
 
     if "username" in session:
-        user = User.query.get(username)
+        user = User.query.get_or_404(username)
         return render_template('user_info.html', user=user)
     else:
         flash("You must be logged in to view!")
@@ -98,9 +98,11 @@ def show_user_info(username):
 
 @app.route('/users/<username>/delete', methods=["POST"])
 def delete_user(username):
+    """Remove user from database and deletes all of user's notes"""
 
+    # need to delete notes first!
     user = User.query.get_or_404(username)
+    
+    db.session.delete(user)
     db.session.delete(user)
     db.session.commit()
-    
-    

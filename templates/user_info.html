@@ -7,5 +7,19 @@
 
 <p>Username: {{ user.username }}</p>
 <p>Email: {{ user.email }}</p>
+<a href='/users/{{ user.username }}/delete'><button>Delete User</button></a>
+
+<h1> Notes </h1>
+<ul id="notes-list">
+  {% for note in user.notes %}
+  <li>
+    <a href='/notes/{{ note.id }}/update'><p>{{ note.title }}</p></a>
+    <p>{{ note.content }}</p>
+    <a href='/notes/{{ note.id }}/delete'><button>Delete Note</button></a>
+  </li>
+  {% endfor %}
+</ul>
+
+<a href='/users/{{ user.username }}/notes/add'><p>Add a Note</p></a>
 
 {% endblock %}
