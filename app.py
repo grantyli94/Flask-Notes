@@ -2,7 +2,7 @@
 
 from models import User, Note, db, connect_db
 from flask import Flask, request, jsonify, render_template, redirect, session, flash
-from forms import AddUserForm, LoginForm
+from forms import AddUserForm, LoginForm, AddNoteForm
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -99,10 +99,36 @@ def show_user_info(username):
 @app.route('/users/<username>/delete', methods=["POST"])
 def delete_user(username):
     """Remove user from database and deletes all of user's notes"""
+    if 'username' in session:
+        
+        user = User.query.get_or_404(username)
+        Note.query.filter(Note.owner == username).delete()
+        db.session.delete(user)
+        db.session.commit()
+        # Log user out 
+        session.pop("username", None)
+        return redirect('/')
+    else:
+        flash("You must be logged in to view!")
+        return redirect('/')
 
-    # need to delete notes first!
-    user = User.query.get_or_404(username)
-    
-    db.session.delete(user)
-    db.session.delete(user)
-    db.session.commit()
+@app.route('/users/<username>/notes/add', methods=["GET", "POST"])
+def add_user_notes(username):
+    """ Renders the form for users to add a note"""
+    form = AddNoteForm()
+
+    # On submission, adds note to database
+    if form.validate_on_submit():
+        owner = User.query.get_or_404(username)
+        title = form.title.data
+        content = form.content.data
+        note = Note(title=title, content=content, owner=owner)
+
+        db.session.add(note)
+        db.session.commit()
+        
+        return redirect(f'/users/{username}')
+
+    else:
+        
+        return render_template('note_form.html', form=form)
