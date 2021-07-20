@@ -26,6 +26,7 @@ def root():
 
     return redirect('/register')
 
+########################### User Login/Logout #################################
 @app.route('/register', methods=['POST',"GET"])
 def show_register_form():
     """Shows registration page and handles user creation"""
@@ -82,6 +83,8 @@ def log_user_out():
     session.pop('username', None)
     return redirect('/')
 
+########################### User Info ######################################
+
 @app.route('/users/<username>')
 def show_user_info(username):
     """Shows user info for logged in user"""
@@ -92,3 +95,12 @@ def show_user_info(username):
     else:
         flash("You must be logged in to view!")
         return redirect('/')
+
+@app.route('/users/<username>/delete', methods=["POST"])
+def delete_user(username):
+
+    user = User.query.get_or_404(username)
+    db.session.delete(user)
+    db.session.commit()
+    
+    

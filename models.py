@@ -29,6 +29,7 @@ class User(db.Model):
                            nullable=False)
     last_name = db.Column(db.String(30),
                           nullable=False)
+    notes = db.relationship('Note', backref='user')
 
     def __repr__(self):
         """Shows information about user"""
@@ -63,3 +64,13 @@ class User(db.Model):
         else:
             return False
     # end_authenticate
+
+
+class Note(db.Model):
+
+    id = db.Column(db.Integer, 
+                   primary_key=True,
+                   autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.String, nullable=False)
+    owner = db.column(db.String(), db.ForeignKey('users.username'))
