@@ -1,7 +1,7 @@
 """Flask app for Users"""
 
 from models import User, db, connect_db
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, jsonify, render_template, redirect, session
 from forms import AddUserForm
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -26,6 +26,28 @@ def root():
 
     return redirect('/register')
 
-@app.route('/register')
+@app.route('/register', methods=['POST',"GET"])
 def show_register_form():
     form = AddUserForm()
+
+    if form.validate_on_submit():
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data 
+
+        user = User.register(username, 
+                             password, 
+                             first_name, 
+                             last_name,
+                             email)
+        db.session.add(user)
+        db.session.commit()
+
+        session['username'] = user.username
+
+        return redirect('/secret')  # will modify later
+    
+    else:
+        return render_template('register.html',form=form)
