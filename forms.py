@@ -1,9 +1,8 @@
 """Forms for Flask Notes app"""
-from re import L
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, BooleanField, PasswordField
+from wtforms import StringField, PasswordField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import InputRequired,  Length, Email
+from wtforms.validators import InputRequired, Length, Email
 
 class AddUserForm(FlaskForm):
     """Form for adding users"""
@@ -28,8 +27,9 @@ class LoginForm(FlaskForm):
                            validators=[InputRequired()])
 
 
-
+#TODO: change to AddOrEditForm
 class AddNoteForm(FlaskForm):
+    """Form for adding a note"""
     
     title = StringField("Title",
                         validators=[InputRequired(), Length(1,20)])

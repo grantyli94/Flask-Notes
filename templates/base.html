@@ -8,9 +8,19 @@
 </head>
 <body>
 
+{% if 'username' in session %}
+<form action="/logout" method="POST">
+  <button>Logout</button>
+</form>
+  <a href='/users/{{ session["username"] }}'><button>Profile</button></a>
+
+{% endif %}
+
 {% for msg in get_flashed_messages() %}
   <p>{{ msg }}</p>
 {% endfor %}
+
+
 
 {% block content %}
 
